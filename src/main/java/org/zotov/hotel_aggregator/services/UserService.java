@@ -1,50 +1,61 @@
 package org.zotov.hotel_aggregator.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
 import org.zotov.hotel_aggregator.credentials.UserCredentials;
-import org.zotov.hotel_aggregator.exceptions.service.ModelNotFoundException;
-import org.zotov.hotel_aggregator.exceptions.service.WrongCredentialsException;
-import org.zotov.hotel_aggregator.interfaces.services.SecurityService;
+import org.zotov.hotel_aggregator.dto.user.UserRequestDTO;
+import org.zotov.hotel_aggregator.dto.user.UserResponseDTO;
+import org.zotov.hotel_aggregator.exceptions.service.*;
+import org.zotov.hotel_aggregator.interfaces.services.ModelMapperService;
+import org.zotov.hotel_aggregator.interfaces.services.AuthService;
+import org.zotov.hotel_aggregator.interfaces.services.UserManagement;
 import org.zotov.hotel_aggregator.models.Role;
 import org.zotov.hotel_aggregator.models.User;
-import org.zotov.hotel_aggregator.repositories.RoleRepository;
-import org.zotov.hotel_aggregator.repositories.UserRepository;
+import org.zotov.hotel_aggregator.interfaces.repositories.RoleRepository;
+import org.zotov.hotel_aggregator.interfaces.repositories.UserRepository;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
-public class UserService implements SecurityService<Long> {
+public class UserService extends CrudService<UserResponseDTO, UserRequestDTO, User, UserRepository> implements UserManagement {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
     RoleRepository roleRepository;
 
-    public User getById(Long id){
-        return userRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(String.format("Model not found, id = %s", id)));
+    public UserService(UserRepository repository, ModelMapperService<UserRequestDTO, UserResponseDTO, User> modelMapper, RoleRepository roleRepository) {
+        super(repository, modelMapper, "User");
+        this.roleRepository = roleRepository;
     }
 
-    public Long authorize(UserCredentials credentials, String roleRequired){
-        User checkUser = userRepository.getByUsername(credentials.getUsername()).orElseThrow(() -> new ModelNotFoundException("User with username = " + credentials.getUsername() + "not found"));
-        if(!checkUser.getPassword().equals(credentials.getPassword())){
-            throw new WrongCredentialsException("Invalid password for " + credentials.getUsername());
+    public UserResponseDTO save(UserRequestDTO user){
+        if(checkUsernameExists(user.getUsername())){
+            throw new ModelConflictException("Username already exists. Username = " + user.getUsername());
         }
-        Role role = roleRepository.findById(checkUser.getRoleId()).orElseThrow(() -> new ModelNotFoundException("Role not found"));
-        if(role.getRoleName().equals(roleRequired)) {
-            return checkUser.getId();
+        return super.save(user);
+    }
+
+    public void update(Long id, UserRequestDTO user){
+        if(checkUsernameExists(user.getUsername())){
+            throw new ModelConflictException("Username already exists. Username = " + user.getUsername());
         }
-        throw new WrongCredentialsException(credentials.getUsername() + "does not have access");
+        Role userRole = this.roleRepository.findByRoleName(user.getRole()).orElseThrow(() -> new ModelNotFoundException("Role not exists"));
+
+        this.repository.save(new User(id, user.getUsername(),user.getPassword(), userRole.getId()));
     }
 
     public Long count(){
-        return this.userRepository.count();
+        return this.repository.count();
     }
 
     public String getRoleByUsername(String username){
-        User searchUser = this.userRepository.getByUsername(username).orElseThrow(() -> new ModelNotFoundException(username + "not found"));
+        User searchUser = this.repository.getByUsername(username).orElseThrow(() -> new ModelNotFoundException(username + "not found"));
         return this.roleRepository.findById(searchUser.getRoleId()).orElseThrow(() -> new ModelNotFoundException("User " + username + "has an unknown role")).getRoleName();
+    }
+
+    public boolean checkUsernameExists(String username){
+        return this.repository.getByUsername(username).isPresent();
+    }
+
+    public List<UserResponseDTO> getAll() {
+        return IterableUtils.toList(this.repository.findAll()).stream().map(this.modelMapper::modelToResponseDTO).toList();
     }
 }

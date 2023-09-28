@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Error</title>
-</head>
-<body>
-    Error
-</body>
-</html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div th:each="error :${errors}">
+    <h3 th:text="${error.defaultMessage}"></h3>
+</div>
+
+

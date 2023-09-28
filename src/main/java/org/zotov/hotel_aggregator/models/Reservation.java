@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
-
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 
@@ -25,15 +25,19 @@ public class Reservation {
     @Column("date_end")
     private LocalDate dateEnd;
 
+    @Column("total_price")
+    private BigDecimal totalPrice;
+
     public Reservation() {
     }
 
-    public Reservation(Long id, Long userId, Long roomId, LocalDate dateStart, LocalDate dateEnd) {
+    public Reservation(Long id, Long userId, Long roomId, LocalDate dateStart, LocalDate dateEnd, BigDecimal totalPrice) {
         this.id = id;
         this.userId = userId;
         this.roomId = roomId;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
+        this.totalPrice = totalPrice;
     }
 
     public Long getId() {
@@ -74,5 +78,25 @@ public class Reservation {
 
     public void setDateEnd(LocalDate dateEnd) {
         this.dateEnd = dateEnd;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", roomId=" + roomId +
+                ", dateStart=" + dateStart +
+                ", dateEnd=" + dateEnd +
+                ", totalPrice=" + totalPrice +
+                '}';
     }
 }

@@ -8,13 +8,23 @@ import org.springframework.data.relational.core.mapping.Table;
 public class User {
     @Id
     private Long id;
-    @Column("login")
-    private String login;
+    @Column("username")
+    private String username;
     @Column("password")
     private String password;
     @Column("role_id")
     private Long roleId;
 
+
+    public User() {
+    }
+
+    public User(Long id, String username, String password, Long roleId) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.roleId = roleId;
+    }
 
     public Long getId() {
         return id;
@@ -24,12 +34,12 @@ public class User {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

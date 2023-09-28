@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Admin Panel</title>
+    </head>
+
+    <body>
+
+    <nav class="menu">
+        <button type="button" onclick="getPanel('/hotels/admin_hotel_list')">Управление отелями</button>
+        <button type="button" onclick="getPanel('/users')">Управление пользователями</button>
+    </nav>
+
+        <div th:text="'Пользователей в системе: ' + ${user_count}"></div>
+        <div th:text="'Отелей в системе: ' + ${hotel_count}"></div>
+        <div th:text="'Заказов в системе: ' + ${reservations_count}"></div>
+        <hr>
+
+        <div id="main-container"></div>
+
+        <script
+                src="https://code.jquery.com/jquery-3.6.3.js"
+                integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+                crossorigin="anonymous"></script>
+        <script th:src="@{/static/js/gethotel.js}"></script>
+        <script th:src="@{/static/js/sendreserv.js}"></script>
+
+
+    <script th:src="@{/static/js/adminManagement.js}"></script>
+    </body>
+
+</html>

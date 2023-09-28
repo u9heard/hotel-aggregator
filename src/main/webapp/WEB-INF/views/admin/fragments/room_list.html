@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div th:each="room : ${rooms}">
+    <p th:text="${room.id} + '. ' + 'Номер комнаты: ' + ${room.roomNumber} + ' Цена: ' + ${room.price}"></p>
+    <button type="button" id="deleteRoomButton" th:data-room-id="${room.id}" th:data-hotel-id="${room.hotelId}">Удалить</button>
+</div>
+
+</html>

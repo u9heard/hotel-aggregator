@@ -1,0 +1,32 @@
+<button type="button" th:onclick="openAddHotelForm()">Добавить пользователя</button>
+
+<div id="addPanel" style="display: none">
+    <button type="button" onclick="this.parentElement.style.display='none'">&times;</button>
+    <label for="username">Логин:</label>
+    <input type="text" id="username" name="username" />
+
+    <label for="password">Пароль:</label>
+    <input type="text" id="password" name="password" />
+
+    <label for="role">Роль:</label>
+    <input type="text" id="role" name="role" />
+
+    <button type="button" onclick=sendNewUser()>Добавить</button>
+</div>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Пользователь</th>
+        <th>Роль</th>
+        <th>&nbsp;</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <th th:text="${user.id}"></th>
+        <th th:text="${user.username}"></th>
+        <th th:text="${user.role}"></th>
+        <th>
+            <button type="button" th:onclick="'deleteUser(' + ${user.id} + ')'">Удалить</button>
+        </th>
+    </tr>
+</table>

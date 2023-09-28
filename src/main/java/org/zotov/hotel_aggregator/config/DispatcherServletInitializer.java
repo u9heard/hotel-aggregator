@@ -25,7 +25,6 @@ public class DispatcherServletInitializer extends AbstractAnnotationConfigDispat
 
     @Override
     protected Filter[] getServletFilters() {
-        System.out.println("Register");
         return new Filter[]{new CharacterEncodingFilter("utf-8", true)};
     }
 

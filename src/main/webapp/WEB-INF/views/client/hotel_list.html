@@ -1,0 +1,19 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div style="color: red" th:each="error : ${errors}">
+    <span th:text="${error.defaultMessage}"></span>
+</div>
+
+<li th:each="hotel : ${hotels}" th:if="${not #lists.isEmpty(hotel.roomList)}">
+    <h1 th:text="${hotel.name} + ' in ' + ${hotel.city}"></h1>
+    <h2>Свободные комнаты:</h2>
+    <ul>
+        <li th:each="room : ${hotel.roomList}">
+            <p th:text="'Room number ' + ${room.roomNumber}"></p>
+            <p th:text="'Price ' + ${room.price}"></p>
+            <button id="reserve-button" th:attr="data-room-id=${room.id}">Reserve</button>
+        </li>
+    </ul>
+</li>
+
+</html>

@@ -10,26 +10,18 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionManager;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJdbcRepositories("org.zotov.hotel_aggregator.repositories")
+@EnableJdbcRepositories("org.zotov.hotel_aggregator.interfaces.repositories")
 public class DatabaseConfig extends AbstractJdbcConfiguration {
 
     @Bean
-    public DataSource dataSource(){ //TODO Это надо переделать
+    public DataSource dataSource(){
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/hotel_aggregator");
-        hikariConfig.setUsername("postgres");
-        hikariConfig.setPassword("root");
-        hikariConfig.setDriverClassName("org.postgresql.Driver");
-        hikariConfig.setMaximumPoolSize(100);
-        hikariConfig.setIdleTimeout(30000);
-        hikariConfig.setMaxLifetime(1800000);
-        hikariConfig.setConnectionTimeout(30000);
-        hikariConfig.setConnectionTestQuery("SELECT 1");
+        hikariConfig.setDataSourceJNDI("java:comp/env/jdbc/database");
+
 
         return new HikariDataSource(hikariConfig);
     }

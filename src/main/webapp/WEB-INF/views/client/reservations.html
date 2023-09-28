@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+    <body>
+    <header th:insert="~{blocks/navigation :: header}"></header>
+    <h2>Мои заказы</h2>
+        <div>
+            <ul>
+                <li th:each="reserv : ${reservations}">
+                    <p th:text="'Номер заказа: ' + ${reserv.id}"></p>
+                    <p th:if="${reserv.hotelName != null && !reserv.hotelName.isEmpty()}" th:text="'Отель: ' + ${reserv.hotelName} + ' in ' + ${reserv.city}"></p>
+                    <p th:if="${reserv.hotelName != null && !reserv.hotelName.isEmpty()}" th:text="'Номер комнаты: ' + ${reserv.roomNumber}"></p>
+                    <p th:text="'С ' + ${reserv.dateStart} + ' по ' + ${reserv.dateEnd}"></p>
+                    <p th:text="'Итого: ' + ${reserv.totalPrice} "></p>
+                    <p style="color: red" th:if="${reserv.description != null}" th:text="'Сообщение: ' + ${reserv.description}"></p>
+                    <button type="button" th:onclick="'deleteReservation(' + ${reserv.id} + ')'">Удалить</button>
+                </li>
+            </ul>
+        </div>
+
+    <script
+            src="https://code.jquery.com/jquery-3.6.3.js"
+            integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+            crossorigin="anonymous"></script>
+    <script th:src="@{/static/js/deleteReservation.js}"></script>
+    </body>
+
+</html>

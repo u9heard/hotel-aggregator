@@ -1,5 +1,6 @@
 package org.zotov.hotel_aggregator.models;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -12,15 +13,16 @@ public class Room {
     private Long id;
 
     @Column("hotel_id")
+    @NotNull
     private Long hotelId;
 
     @Column("room_number")
+    @NotNull
     private Integer roomNumber;
 
     @Column("price")
+    @NotNull
     private BigDecimal price;
-
-    //TODO tsrange
 
     public Room() {
     }

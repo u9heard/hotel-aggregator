@@ -1,67 +1,81 @@
 package org.zotov.hotel_aggregator.services;
 
-import org.apache.commons.collections4.IterableUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.zotov.hotel_aggregator.dto.HotelDTO;
+import org.zotov.hotel_aggregator.dto.hotel.HotelWithRoomsResponseDTO;
+import org.zotov.hotel_aggregator.dto.hotel.HotelRequestDTO;
+import org.zotov.hotel_aggregator.dto.hotel.HotelResponseDTO;
+import org.zotov.hotel_aggregator.dto.reservation.ReservationSearchDTO;
+import org.zotov.hotel_aggregator.exceptions.service.ModelConflictException;
 import org.zotov.hotel_aggregator.exceptions.service.ModelNotFoundException;
-import org.zotov.hotel_aggregator.interfaces.DTOConvertable;
+import org.zotov.hotel_aggregator.interfaces.services.HotelManagement;
+import org.zotov.hotel_aggregator.interfaces.services.ModelMapperService;
 import org.zotov.hotel_aggregator.models.Hotel;
 import org.zotov.hotel_aggregator.models.Room;
-import org.zotov.hotel_aggregator.repositories.HotelRepository;
-import org.zotov.hotel_aggregator.repositories.ReservationRepository;
-import org.zotov.hotel_aggregator.repositories.RoomRepository;
+import org.zotov.hotel_aggregator.interfaces.repositories.HotelRepository;
+import org.zotov.hotel_aggregator.interfaces.repositories.ReservationRepository;
+import org.zotov.hotel_aggregator.interfaces.repositories.RoomRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class HotelService { //TODO Сделать абстрактные сервисы
+public class HotelService extends CrudService<HotelResponseDTO, HotelRequestDTO, Hotel, HotelRepository> implements HotelManagement {
 
-    HotelRepository hotelRepository;
     RoomRepository roomRepository;
     ReservationRepository reservationRepository;
 
-    @Autowired
-    public HotelService(HotelRepository hotelRepository, RoomRepository roomRepository, ReservationRepository reservationRepository) {
-        this.hotelRepository = hotelRepository;
+    public HotelService(HotelRepository repository, ModelMapperService<HotelRequestDTO, HotelResponseDTO, Hotel> modelMapper, RoomRepository roomRepository, ReservationRepository reservationRepository) {
+        super(repository, modelMapper, "Hotel");
         this.roomRepository = roomRepository;
         this.reservationRepository = reservationRepository;
     }
 
-    public Hotel findById(Long id){
-        return this.hotelRepository.findById(id).orElseThrow(() -> new ModelNotFoundException("Hotel not found, id = " + id));
+    @Override
+    public HotelResponseDTO save(HotelRequestDTO hotel) {
+        if (checkIfExists(hotel.getName(), hotel.getCity())) {
+            throw new ModelConflictException("Hotel already exists");
+        }
+
+        return super.save(hotel);
     }
 
-    public List<HotelDTO> findHotelsWithFreeRooms(String city, LocalDate date_start, LocalDate date_end){
-        List<Hotel> hotelList = this.hotelRepository.findHotelByCity(city);
-        return hotelList.stream().map(hotel -> {
-            List<Room> roomList = this.roomRepository.findFreeRoomsByDate(date_start, date_end, hotel.getId());
-            return new HotelDTO(hotel.getId(), hotel.getName(), hotel.getCity(), roomList);
-        }).toList();
+    public void update(Long id, HotelRequestDTO hotel){
+        checkIfExists(hotel.getName(), hotel.getCity());
+
+        this.repository.save(new Hotel(id, hotel.getName(), hotel.getCity()));
     }
 
-    public List<Hotel> findAll(){
-        return IterableUtils.toList(this.hotelRepository.findAll());
+    public List<HotelWithRoomsResponseDTO> findHotelsWithFreeRooms(ReservationSearchDTO reservationSearchDTO) {
+        List<Hotel> hotelList = this.repository.findHotelByCity(reservationSearchDTO.getCity());
+        if (hotelList.isEmpty()) {
+            throw new ModelNotFoundException("There is no hotels in " + reservationSearchDTO.getCity());
+        }
+
+        List<HotelWithRoomsResponseDTO> extendedHotels = hotelList.stream()
+                .map(hotel -> new HotelWithRoomsResponseDTO(hotel.getId(), hotel.getName(), hotel.getCity(), null)).toList();
+
+        addFreeRoomsForHotels(extendedHotels, reservationSearchDTO.getDateStart(), reservationSearchDTO.getDateEnd());
+        return extendedHotels;
     }
 
-//    public List<HotelDTO> toDTO(List<Hotel> hotelList){
-//        return hotelList.stream().map(hotel -> {
-//            List<Room> roomList = this.roomRepository.findFreeRoomsByDate(hotel.hotel.getId());
-//            return new HotelDTO(hotel.getId(), hotel.getName(), hotel.getCity(), roomList);
-//        }).toList();
-//    }
+    public List<HotelResponseDTO> findAll() {
+        List<HotelResponseDTO> responseDTOS = new ArrayList<>();
+        this.repository.findAll().forEach(hotel -> {
+            responseDTOS.add(this.modelMapper.modelToResponseDTO(hotel));
+        });
+
+        return responseDTOS;
+    }
+
+    private void addFreeRoomsForHotels(List<HotelWithRoomsResponseDTO> hotels, LocalDate dateStart, LocalDate dateEnd) {
+        hotels.forEach(hotelWithRoomsResponseDTO -> {
+            List<Room> roomList = this.roomRepository.findFreeRoomsByDate(dateStart, dateEnd, hotelWithRoomsResponseDTO.getId());
+            hotelWithRoomsResponseDTO.setRoomList(roomList);
+        });
+    }
+
+    private boolean checkIfExists(String name, String city) {
+        return this.repository.getHotelByCityAndName(city, name).isPresent();
+    }
 }
-
-//@Table("hotels")
-//public class Hotel {
-//    @Id
-//    private Long id;
-//
-//    @MappedCollection(idColumn = "hotel_id")
-//    private Set<Room> rooms;
-//
-//    // Другие поля и методы
-//}

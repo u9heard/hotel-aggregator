@@ -8,19 +8,23 @@ $(document).ready(function () {
 });
 
 function reserveRoom(dateStart, dateEnd, roomId){
+    let data = {
+        "dateStart": dateStart,
+        "dateEnd": dateEnd,
+        "roomId": roomId
+    }
     $.ajax({
         type: 'POST',
-        url: '/reserve',
-        data: {
-            "date_start" : dateStart,
-            "date_end" : dateEnd,
-            "room_id" : roomId,
-        },
+        url: '/api/reservations',
+        data: JSON.stringify(data),
+        contentType: "application/json",
 
         success: function(response) {
+            alert(response);
             // window.location.href = 'user/orders';
         },
         error: function(error) {
+            alert(error);
             console.error('Ошибка при выполнении запроса:', error);
         }
     })

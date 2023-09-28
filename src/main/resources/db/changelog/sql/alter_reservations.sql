@@ -1,0 +1,1 @@
+alter TABLE reservations ADD COLUMN total_price numeric(14,4);

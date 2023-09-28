@@ -1,8 +1,12 @@
 package org.zotov.hotel_aggregator.models;
 
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.List;
+
 
 @Table("hotels")
 public class Hotel {
@@ -10,9 +14,11 @@ public class Hotel {
     private Long id;
 
     @Column("name")
+    @NotBlank
     private String name;
 
     @Column("city")
+    @NotBlank
     private String city;
 
     public Hotel() {

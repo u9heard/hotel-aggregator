@@ -1,0 +1,75 @@
+<!--<!DOCTYPE html>-->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!--    <head>-->
+<!--        <meta charset="utf-8">-->
+<!--        <title>Add Hotel</title>-->
+<!--    </head>-->
+
+<!--    <body>-->
+
+<!--        <header th:insert="~{blocks/admin_navigation :: header}"></header>-->
+
+        <button type="button" th:onclick="openAddHotelForm()">Добавить отель</button>
+
+        <div id="addPanel" style="display: none">
+            <button type="button" onclick="this.parentElement.style.display='none'">&times;</button>
+            <label for="hotel_name">Отель:</label>
+            <input type="text" id="hotel_name" name="hotel_name" />
+
+            <label for="city">Город:</label>
+            <input type="text" id="city" name="city" />
+
+            <button type="button" onclick=sendNewHotel()>Добавить</button>
+        </div>
+
+        <table>
+            <tr>
+                <th>Отель</th>
+                <th>Город</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+            </tr>
+            <tr th:each="hotel : ${hotels}">
+                <th th:text="${hotel.name}">
+                <th th:text="${hotel.city}">
+                <th>
+                    <button type="button" id="showRooms" th:data-hotel-id="${hotel.id}" >Комнаты</button>
+                    <button type="button" id="deleteHotelButton" th:data-hotel-id="${hotel.id}">Удалить</button>
+                    <div th:id="'roomPanel' + ${hotel.id}" style="display: none">
+                        <button type="button" onclick="this.parentElement.style.display='none'">&times;</button>
+                        <div th:id="'newRooms' + ${hotel.id}" data-room-count="0">
+<!--                            <div id="newRoom">-->
+<!--                                <label for="room_number">Номер:</label>-->
+<!--                                <input type="text" id="room_number" name="room_number" />-->
+
+<!--                                <label for="price">Цена:</label>-->
+<!--                                <input type="text" id="price" name="price" />-->
+<!--                            </div>-->
+                        </div>
+                        <button type="button" id="addRoomFormButton" th:data-hotel-id="${hotel.id}">+</button>
+                        <button type="button" id="sendNewRooms" th:data-hotel-id="${hotel.id}">Отправить</button>
+                        <button type="button" id="closeButton" th:data-hotel-id="${hotel.id}">Очистить</button>
+                        <div th:id="'existsRooms' + ${hotel.id}">
+
+                        </div>
+
+
+                    </div>
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </table>
+
+
+<!--        <script-->
+<!--                src="https://code.jquery.com/jquery-3.6.3.js"-->
+<!--                integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="-->
+<!--                crossorigin="anonymous"></script>-->
+<!--        <script th:src="@{/static/js/deleteHotel.js}"></script>-->
+
+<!--    </body>-->
+
+</html>
