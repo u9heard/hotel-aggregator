@@ -33,10 +33,13 @@ $(document).ready(function () {
 
     $(document).on("click", "#sendNewRooms", function () {
         let hotelId = $(this).data("hotel-id");
+        clearRoomErrors(hotelId);
         sendNewRooms(hotelId).then(function (){
             clearRoomForm(hotelId);
+            // TODO обновление комнат
         }).catch(function (error) {
-
+            console.log(error);
+            setErrors(hotelId, error.responseText);
         });
 
     })
@@ -59,14 +62,18 @@ function getPanel(url){
     return "";
 }
 
+function clearRoomErrors(hotel_id){
+    $("#newRooms" + hotel_id + " div#error").remove();
+}
+
 function sendNewRooms(hotel_id){
     const roomData = [];
     const roomsContainer = $("#newRooms"+hotel_id);
     const roomCount = roomsContainer.data("room-count");
 
     for (let i = 0; i < roomCount; i++) {
-        const roomNumber = $(`#room_number_${i}`);
-        const price = $(`#price_${i}`);
+        const roomNumber = roomsContainer.find(`#room_number_${i}`);
+        const price = roomsContainer.find(`#price_${i}`);
 
         if (roomNumber.length && price.length) {
             const room = {
@@ -95,12 +102,32 @@ function sendNewRooms(hotel_id){
                     resolve()
                 },
                 error: function (error) {
-                    reject();
-                    console.error('Ошибка при выполнении запроса:', error);
+                    reject(error);
+                    // console.error('Ошибка при выполнении запроса:', error);
                 }
             })
         }
     )
+}
+
+function setErrors(hotel_id, errors){
+    const roomsContainer = $("#newRooms"+hotel_id);
+
+    const jsonErrors = JSON.parse(errors).errors[0];
+
+    for(const key in jsonErrors){
+        if(jsonErrors.hasOwnProperty(key)){
+            const errorsText = jsonErrors[key];
+
+            for(const keyMessage in errorsText) {
+                const errorDiv = $(`<div id='error' style="color: red">`).html(`
+                    ${errorsText[keyMessage]}
+                `);
+                const roomFormContainer = roomsContainer.find(`#room_number_${key}`).parent();
+                roomFormContainer.append(errorDiv);
+            }
+        }
+    }
 }
 
 function openAddHotelForm(){
@@ -132,7 +159,7 @@ function addRoomForm(hotel_id){
 
     const roomCount = parseInt(roomContainer.data("room-count"));
 
-    const roomDiv = $('<div id="newRoom">').html(`
+    const roomDiv = $(`<div id='newRoom' data-room-count='${roomCount}'>`).html(`
             <label for="room_number">Номер:</label>
             <input type="text" id="room_number_${roomCount}" name="room_number_${roomCount}" />
 
