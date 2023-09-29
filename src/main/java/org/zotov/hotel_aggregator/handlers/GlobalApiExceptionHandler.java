@@ -1,15 +1,19 @@
 package org.zotov.hotel_aggregator.handlers;
 
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ElementKind;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.zotov.hotel_aggregator.dto.error.ErrorResponse;
+import org.zotov.hotel_aggregator.dto.error.ErrorResponseList;
 import org.zotov.hotel_aggregator.exceptions.service.ModelConflictException;
 import org.zotov.hotel_aggregator.exceptions.validation.DataValidationException;
 import org.zotov.hotel_aggregator.exceptions.service.ModelNotFoundException;
+
+import java.util.*;
 
 @RestControllerAdvice(basePackages = "org.zotov.hotel_aggregator.controllers.restcontrollers")
 public class GlobalApiExceptionHandler {
@@ -29,13 +33,22 @@ public class GlobalApiExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> constraintViolation(ConstraintViolationException exception){
+    public ResponseEntity<ErrorResponseList> constraintViolation(ConstraintViolationException exception){
         exception.printStackTrace();
-        ErrorResponse errorResponse = new ErrorResponse();
-
+        ErrorResponseList errorResponse = new ErrorResponseList();
+        Map<Integer, List<String>> err = new TreeMap<>();
         exception.getConstraintViolations().forEach(constraintViolation -> {
-            errorResponse.addError(constraintViolation.getMessage());
+
+            constraintViolation.getPropertyPath().forEach(node -> {
+                if(node.getKind().equals(ElementKind.PROPERTY)){
+                    err.computeIfAbsent(node.getIndex(), k -> new ArrayList<>());
+                    err.get(node.getIndex()).add(constraintViolation.getMessage());
+                }
+            });
+
+
         });
+        errorResponse.addObject(err);
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
@@ -57,6 +70,7 @@ public class GlobalApiExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> internalError(Exception exception){
         exception.printStackTrace();
-        return new ResponseEntity<>(new ErrorResponse("Internal Server Error REST"), HttpStatus.INTERNAL_SERVER_ERROR);
+        System.out.println("Internal");
+        return new ResponseEntity<>(new ErrorResponse("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

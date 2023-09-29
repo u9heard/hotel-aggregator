@@ -13,13 +13,11 @@ $(document).ready(function () {
         let roomId = $(this).data("room-id");
         let hotelId = $(this).data("hotel-id")
         deleteRoom(roomId).then(function () {
-            // deleteRoom завершился успешно, теперь вызываем showRoomPanel
             showRoomPanel(hotelId);
         })
-            .catch(function (error) {
-                // Обработка ошибок, если deleteRoom завершился с ошибкой
-                console.error("Произошла ошибка при удалении комнаты:", error);
-            });
+        .catch(function (error) {
+            console.error("Произошла ошибка при удалении комнаты:", error);
+        });
 
     });
 
@@ -37,6 +35,8 @@ $(document).ready(function () {
         let hotelId = $(this).data("hotel-id");
         sendNewRooms(hotelId).then(function (){
             clearRoomForm(hotelId);
+        }).catch(function (error) {
+
         });
 
     })
@@ -145,7 +145,6 @@ function addRoomForm(hotel_id){
 }
 
 function clearRoomForm(hotel_id){
-    console.log("123");
     let roomListSelector = $("#newRooms" + hotel_id);
     roomListSelector.empty();
     roomListSelector.data("room-count", 0);
