@@ -16,7 +16,7 @@ import org.zotov.hotel_aggregator.interfaces.services.HotelManagement;
 import java.util.List;
 
 @Controller
-@RequestMapping("/hotels")
+@RequestMapping("/")
 public class HotelController {
 
     private final HotelManagement hotelService;

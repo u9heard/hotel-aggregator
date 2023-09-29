@@ -51,7 +51,7 @@ public class ReservationMapperService implements ModelMapperService<ReservationR
                 reservedRoom = archivedRoomToRoom(archivedRoom);
                 ArchivedHotel archivedHotel = this.hotelRepository.getHotelByIdFromArchive(reservedRoom.getHotelId()).orElseThrow(() -> new ModelNotFoundException("Hotel not found in archive"));
                 hotel = this.archivedHotelToHotel(archivedHotel);
-                responseDTO.setDescription("This hotel has been removed");
+                responseDTO.setDescription("This hotel or room has been removed");
             }
             else {
                 hotel = this.hotelRepository.findById(reservedRoom.getHotelId()).orElseThrow(() -> new ModelNotFoundException("Hotel not found"));

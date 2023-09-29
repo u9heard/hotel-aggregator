@@ -32,6 +32,7 @@ public class GlobalApiExceptionHandler {
     public ResponseEntity<ErrorResponse> constraintViolation(ConstraintViolationException exception){
         exception.printStackTrace();
         ErrorResponse errorResponse = new ErrorResponse();
+
         exception.getConstraintViolations().forEach(constraintViolation -> {
             errorResponse.addError(constraintViolation.getMessage());
         });

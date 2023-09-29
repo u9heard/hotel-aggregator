@@ -12,15 +12,15 @@ public class ReservationRequestDTO {
 
     private Long userId;
 
-    @NotNull(message = "Room id can't be empty")
+    @NotNull(message = "{empty.room.id}")
     private Long roomId;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Start date can't be empty")
+    @NotNull(message = "{empty.start_date}")
     private LocalDate dateStart;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "End date can't be empty")
+    @NotNull(message = "{empty.end_date}")
     private LocalDate dateEnd;
 
     public ReservationRequestDTO() {

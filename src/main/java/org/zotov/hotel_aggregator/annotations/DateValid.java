@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = DateIntervalValidator.class)
 public @interface DateValid {
-    String message() default "Check date interval";
+    String message() default "{invalid.date_interval}";
 
     Class<?>[] groups() default {};
 

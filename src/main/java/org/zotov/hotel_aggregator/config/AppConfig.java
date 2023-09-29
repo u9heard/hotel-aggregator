@@ -86,8 +86,6 @@ public class AppConfig implements WebMvcConfigurer {
         converters.add(jsonConverter());
     }
 
-
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(securityInterceptor);

@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 
 public class UserRequestDTO {
 
-    @NotBlank(message = "Username can't be empty")
+    @NotBlank(message = "{empty.user.username}")
     private String username;
-    @NotBlank(message = "Password can't be empty")
+    @NotBlank(message = "{empty.user.password}")
     private String password;
-    @NotBlank(message = "Role can't be empty")
+    @NotBlank(message = "{empty.user.role}")
     private String role;
 
     public UserRequestDTO() {

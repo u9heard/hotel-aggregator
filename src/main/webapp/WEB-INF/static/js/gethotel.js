@@ -10,7 +10,7 @@ function sendData() {
 
     $.ajax({
         type: 'GET',
-        url: '/hotels/hotel_list',
+        url: '/hotel_list',
         data: {
             "dateStart" : date_start,
             "dateEnd" : date_end,

@@ -212,7 +212,7 @@ function sendNewHotel(){
         contentType: "application/json",
 
         success: function(response) {
-            getPanel("/hotels/admin_hotel_list");
+            getPanel("/admin_hotel_list");
         },
         error: function(error) {
             console.error('Ошибка при выполнении запроса:', error);
@@ -228,7 +228,7 @@ function deleteHotel(id){
         url: '/api/hotels/' + id,
 
         success: function(response) {
-            getPanel("/hotels/admin_hotel_list");
+            getPanel("/admin_hotel_list");
         },
         error: function(error) {
 

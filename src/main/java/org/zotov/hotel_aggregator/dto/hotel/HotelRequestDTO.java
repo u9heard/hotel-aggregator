@@ -7,10 +7,10 @@ import org.zotov.hotel_aggregator.models.Hotel;
 public class HotelRequestDTO {
     private Long id;
 
-    @NotBlank(message = "Name can't be empty")
+    @NotBlank(message = "{empty.name}")
     private String name;
 
-    @NotBlank(message = "City can't be empty")
+    @NotBlank(message = "{empty.city}")
     private String city;
 
     public HotelRequestDTO() {

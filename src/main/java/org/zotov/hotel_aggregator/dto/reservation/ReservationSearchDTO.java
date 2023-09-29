@@ -13,15 +13,15 @@ import java.time.LocalDate;
 public class ReservationSearchDTO {
     private String hotel_name;
 
-    @NotBlank(message = "City can't be empty")
+    @NotBlank(message = "{empty.city}")
     private String city;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Start date can't be empty")
+    @NotNull(message = "{empty.start_date}")
     private LocalDate dateStart;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "End date can't be empty")
+    @NotNull(message = "{empty.end_date}")
     private LocalDate dateEnd;
 
     public ReservationSearchDTO() {

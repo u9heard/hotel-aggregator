@@ -7,13 +7,13 @@ import java.math.BigDecimal;
 
 public class RoomRequestDTO {
 
-    @NotNull(message = "Hotel id can't be empty")
+    @NotNull(message = "{empty.hotel.id}")
     private Long hotelId;
 
-    @NotNull(message = "Room number can't be empty")
+    @NotNull(message = "{empty.room.number}")
     private Integer roomNumber;
 
-    @NotNull(message = "Price can't be empty")
+    @NotNull(message = "{empty.room.price}")
     private BigDecimal price;
 
     public RoomRequestDTO() {
