@@ -48,6 +48,11 @@ $(document).ready(function () {
         });
 
     })
+
+    $(document).on('click', "#sendHotelButton", function () {
+        clearAddPanel();
+        sendNewHotel();
+    });
 });
 
 function getPanel(url){
@@ -93,8 +98,6 @@ function sendNewRooms(hotel_id){
 
     const jsonData = JSON.stringify(roomData);
 
-    console.log(jsonData);
-
     return new Promise( function (resolve, reject) {
             $.ajax({
                 accept: "application/json",
@@ -117,7 +120,6 @@ function sendNewRooms(hotel_id){
 
 function setGeneralError(hotel_id, errors){
     const roomsContainer = $("#newRooms"+hotel_id);
-
     const jsonErrors = JSON.parse(errors).errors;
     const generalError = jsonErrors["error"];
 
@@ -135,9 +137,6 @@ function setErrorFields(hotel_id, errors){
     const generalErrors = jsonErrors["generalErrors"];
     const fieldErrors = jsonErrors["fieldErrors"];
 
-    console.log("general: " + generalErrors);
-    console.log("field: " + fieldErrors);
-
     for(const key in fieldErrors){
         if(fieldErrors.hasOwnProperty(key)){
             const errorsText = fieldErrors[key];
@@ -149,6 +148,17 @@ function setErrorFields(hotel_id, errors){
                 const roomFormContainer = roomsContainer.find(`#room_number_${key}`).parent();
                 roomFormContainer.append(errorDiv);
             }
+        }
+    }
+
+    for(const key in generalErrors){
+        if(generalErrors.hasOwnProperty(key)){
+            const errorText = generalErrors[key];
+            const errorDiv = $(`<div id='error' style="color: red">`).html(`
+                ${errorText}
+            `);
+            console.log(errorText);
+            roomsContainer.append(errorDiv);
         }
     }
 }
@@ -200,6 +210,10 @@ function clearRoomForm(hotel_id){
     roomListSelector.data("room-count", 0);
 }
 
+function clearAddPanel(){
+    $("#addPanel div#error").remove();
+}
+
 function deleteRoom(id){
 
     return new Promise(function (resolve, reject){
@@ -240,7 +254,6 @@ function sendNewUser(){
         },
         error: function(error) {
             console.error('Ошибка при выполнении запроса:', error);
-            return "";
         }
     });
 }
@@ -264,10 +277,24 @@ function sendNewHotel(){
             getPanel("/admin_hotel_list");
         },
         error: function(error) {
+            setErrorsForHotelAddPanel(error.responseText);
             console.error('Ошибка при выполнении запроса:', error);
-            return "";
         }
     });
+}
+
+function setErrorsForHotelAddPanel(error){
+    const jsonError = JSON.parse(error).errors;
+
+    console.log(jsonError);
+
+    for(const key in jsonError){
+        const errorDiv = $(`<div id='error' style="color: red">`).html(`
+            ${jsonError[key]}
+        `);
+        console.log("Error = " + jsonError[key]);
+        $("#addPanel").append(errorDiv);
+    }
 }
 
 function deleteHotel(id){
@@ -280,9 +307,7 @@ function deleteHotel(id){
             getPanel("/admin_hotel_list");
         },
         error: function(error) {
-
             console.error('Ошибка при выполнении запроса:', error);
-            return "";
         }
     });
 }
@@ -296,7 +321,6 @@ function deleteUser(id){
         },
         error: function(error) {
             console.error('Ошибка при выполнении запроса:', error);
-            return "";
         }
     });
 }
