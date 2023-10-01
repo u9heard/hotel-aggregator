@@ -4,15 +4,12 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.zotov.hotel_aggregator.models.ArchivedHotel;
-import org.zotov.hotel_aggregator.models.Hotel;
+import org.zotov.hotel_aggregator.models.ArchivedRoom;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface HotelRepository extends CrudRepository<Hotel, Long> {
-    List<Hotel> findHotelByCity(String city);
-
-    Optional<Hotel> getHotelByCityAndName(String city, String name);
+public interface RoomArchiveRepository extends CrudRepository<ArchivedRoom, Long> {
+    @Query("SELECT * FROM archived_rooms WHERE room_id = :id")
+    Optional<ArchivedRoom> getRoomByIdFromArchive(@Param("id") Long id);
 }

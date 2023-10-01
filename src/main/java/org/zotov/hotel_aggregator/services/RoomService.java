@@ -27,7 +27,6 @@ public class RoomService extends CrudService<RoomResponseDTO, RoomRequestDTO, Ro
         if(!checkRoomExists(model)){
             throw new ModelConflictException("Room already exists");
         }
-
         return super.save(model);
     }
 

@@ -25,13 +25,6 @@ import java.util.Locale;
 @ControllerAdvice(basePackages = "org.zotov.hotel_aggregator.controllers.defaultcontrollers")
 public class GlobalExceptionHandler {
 
-    private MessageSource messageSource;
-
-    @Autowired
-    public GlobalExceptionHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
     @ExceptionHandler(ModelNotFoundException.class)
     public ModelAndView modelNotFound(ModelNotFoundException ex){
         ModelAndView modelAndView = new ModelAndView("error_page");
@@ -47,16 +40,6 @@ public class GlobalExceptionHandler {
         modelAndView.addObject("errors", exception.getAllErrors());
         modelAndView.setStatus(HttpStatus.BAD_REQUEST);
         exception.printStackTrace();
-
-        return modelAndView;
-    }
-
-    @ExceptionHandler(DataValidationException.class)
-    public ModelAndView dataValidation(DataValidationException ex){
-        ModelAndView modelAndView = new ModelAndView("error_page");
-        modelAndView.addObject("errors", ex.getErrors().getFieldErrors());
-        modelAndView.setStatus(HttpStatus.BAD_REQUEST);
-        ex.printStackTrace();
 
         return modelAndView;
     }
@@ -78,9 +61,5 @@ public class GlobalExceptionHandler {
         modelAndView.addObject("errors", List.of(new FieldError("", "", "Internal Server Error")));
         modelAndView.setStatus(HttpStatus.BAD_REQUEST);
         return modelAndView;
-    }
-
-    private String getMessageByKey(String key){
-        return this.messageSource.getMessage(key, null, key, Locale.getDefault());
     }
 }

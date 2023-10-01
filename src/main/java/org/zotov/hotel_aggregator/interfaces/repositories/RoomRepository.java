@@ -29,8 +29,4 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
     List<Room> findRoomsByHotelId(Long hotelId);
 
     Optional<Room> findRoomByHotelIdAndRoomNumber(Long hotelIdm, Integer roomNumber);
-
-    @Query("SELECT * FROM archived_rooms WHERE room_id = :id")
-    Optional<ArchivedRoom> getRoomByIdFromArchive(@Param("id") Long id);
-
 }

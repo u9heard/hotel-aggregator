@@ -36,10 +36,15 @@ $(document).ready(function () {
         clearRoomErrors(hotelId);
         sendNewRooms(hotelId).then(function (){
             clearRoomForm(hotelId);
-            // TODO обновление комнат
+            getExistingRooms(hotelId);
         }).catch(function (error) {
             console.log(error);
-            setErrors(hotelId, error.responseText);
+            if(error.status === 409){
+                setGeneralError(hotelId, error.responseText);
+            }
+            else {
+                setErrorFields(hotelId, error.responseText);
+            }
         });
 
     })
@@ -110,14 +115,32 @@ function sendNewRooms(hotel_id){
     )
 }
 
-function setErrors(hotel_id, errors){
+function setGeneralError(hotel_id, errors){
     const roomsContainer = $("#newRooms"+hotel_id);
 
-    const jsonErrors = JSON.parse(errors).errors[0];
+    const jsonErrors = JSON.parse(errors).errors;
+    const generalError = jsonErrors["error"];
 
-    for(const key in jsonErrors){
-        if(jsonErrors.hasOwnProperty(key)){
-            const errorsText = jsonErrors[key];
+    const errorDiv = $(`<div id='error' style="color: red">`).html(`
+        ${generalError}
+    `);
+
+    roomsContainer.append(errorDiv);
+}
+
+function setErrorFields(hotel_id, errors){
+    const roomsContainer = $("#newRooms"+hotel_id);
+
+    const jsonErrors = JSON.parse(errors).errors;
+    const generalErrors = jsonErrors["generalErrors"];
+    const fieldErrors = jsonErrors["fieldErrors"];
+
+    console.log("general: " + generalErrors);
+    console.log("field: " + fieldErrors);
+
+    for(const key in fieldErrors){
+        if(fieldErrors.hasOwnProperty(key)){
+            const errorsText = fieldErrors[key];
 
             for(const keyMessage in errorsText) {
                 const errorDiv = $(`<div id='error' style="color: red">`).html(`

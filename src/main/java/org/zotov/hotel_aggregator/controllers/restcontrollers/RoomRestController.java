@@ -29,7 +29,7 @@ public class RoomRestController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @RoleRequired("Admin")
-    public ResponseEntity<List<RoomResponseDTO>> addRooms(@RequestBody @NotEmpty List<@Valid RoomRequestDTO> roomList){
+    public ResponseEntity<List<RoomResponseDTO>> addRooms(@RequestBody @NotEmpty(message = "{empty.list.room}") List<@Valid RoomRequestDTO> roomList){
         return ResponseEntity.ok(this.roomService.addRooms(roomList));
     }
 

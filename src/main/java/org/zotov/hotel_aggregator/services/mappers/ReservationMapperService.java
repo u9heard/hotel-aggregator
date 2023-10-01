@@ -4,27 +4,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zotov.hotel_aggregator.dto.reservation.ReservationRequestDTO;
 import org.zotov.hotel_aggregator.dto.reservation.ReservationResponseDTO;
-import org.zotov.hotel_aggregator.exceptions.service.InternalServiceException;
 import org.zotov.hotel_aggregator.exceptions.service.ModelNotFoundException;
+import org.zotov.hotel_aggregator.interfaces.repositories.HotelArchiveRepository;
 import org.zotov.hotel_aggregator.interfaces.repositories.HotelRepository;
+import org.zotov.hotel_aggregator.interfaces.repositories.RoomArchiveRepository;
 import org.zotov.hotel_aggregator.interfaces.repositories.RoomRepository;
 import org.zotov.hotel_aggregator.interfaces.services.ModelMapperService;
 import org.zotov.hotel_aggregator.models.*;
 
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 @Service
 public class ReservationMapperService implements ModelMapperService<ReservationRequestDTO, ReservationResponseDTO, Reservation> {
 
     private final HotelRepository hotelRepository;
     private final RoomRepository roomRepository;
+    private final HotelArchiveRepository hotelArchiveRepository;
+    private final RoomArchiveRepository roomArchiveRepository;
 
     @Autowired
-    public ReservationMapperService(HotelRepository hotelRepository, RoomRepository roomRepository) {
+    public ReservationMapperService(HotelRepository hotelRepository, RoomRepository roomRepository, HotelArchiveRepository hotelArchiveRepository, RoomArchiveRepository roomArchiveRepository) {
         this.hotelRepository = hotelRepository;
         this.roomRepository = roomRepository;
+        this.hotelArchiveRepository = hotelArchiveRepository;
+        this.roomArchiveRepository = roomArchiveRepository;
     }
 
     @Override
@@ -47,9 +51,9 @@ public class ReservationMapperService implements ModelMapperService<ReservationR
             Room reservedRoom = this.roomRepository.findById(reservation.getRoomId()).orElse(null);
             Hotel hotel;
             if(reservedRoom == null){
-                ArchivedRoom archivedRoom = this.roomRepository.getRoomByIdFromArchive(reservation.getRoomId()).orElseThrow(() -> new ModelNotFoundException("Room not found in archive"));
+                ArchivedRoom archivedRoom = this.roomArchiveRepository.getRoomByIdFromArchive(reservation.getRoomId()).orElseThrow(() -> new ModelNotFoundException("Room not found in archive"));
                 reservedRoom = archivedRoomToRoom(archivedRoom);
-                ArchivedHotel archivedHotel = this.hotelRepository.getHotelByIdFromArchive(reservedRoom.getHotelId()).orElseThrow(() -> new ModelNotFoundException("Hotel not found in archive"));
+                ArchivedHotel archivedHotel = this.hotelArchiveRepository.getHotelByIdFromArchive(reservedRoom.getHotelId()).orElseThrow(() -> new ModelNotFoundException("Hotel not found in archive"));
                 hotel = this.archivedHotelToHotel(archivedHotel);
                 responseDTO.setDescription("This hotel or room has been removed");
             }

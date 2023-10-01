@@ -1,25 +1,26 @@
 package org.zotov.hotel_aggregator.dto.error;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.*;
 
 public class ErrorResponse {
-    List<String> errors;
+    private Object errors;
 
-    public ErrorResponse(){
-        this.errors = new ArrayList<>();
+    public ErrorResponse() {
+        errors = new ArrayList<>();
     }
 
-    public ErrorResponse(String error){
-        this.errors = new ArrayList<>();
-        this.errors.add(error);
-    }
-
-    public void addError(String error){
-        this.errors.add(error);
-    }
-
-    public List<String> getErrors() {
+    @JsonProperty("errors")
+    public Object getErrors() {
         return errors;
     }
+
+    public void setErrors(Object errors) {
+        this.errors = errors;
+    }
+
+//    public void addError(Object errorObject){
+//        this.errors.add(errorObject);
+//    }
 }
