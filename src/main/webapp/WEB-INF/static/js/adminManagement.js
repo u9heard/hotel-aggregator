@@ -50,8 +50,13 @@ $(document).ready(function () {
     })
 
     $(document).on('click', "#sendHotelButton", function () {
-        clearAddPanel();
+        clearAddPanelErrors();
         sendNewHotel();
+    });
+
+    $(document).on('click', "#sendUserButton", function () {
+        clearAddPanelErrors();
+        sendNewUser();
     });
 });
 
@@ -210,7 +215,7 @@ function clearRoomForm(hotel_id){
     roomListSelector.data("room-count", 0);
 }
 
-function clearAddPanel(){
+function clearAddPanelErrors(){
     $("#addPanel div#error").remove();
 }
 
@@ -254,6 +259,7 @@ function sendNewUser(){
         },
         error: function(error) {
             console.error('Ошибка при выполнении запроса:', error);
+            setErrorsInAddPanel(error.responseText);
         }
     });
 }
@@ -277,13 +283,13 @@ function sendNewHotel(){
             getPanel("/admin_hotel_list");
         },
         error: function(error) {
-            setErrorsForHotelAddPanel(error.responseText);
+            setErrorsInAddPanel(error.responseText);
             console.error('Ошибка при выполнении запроса:', error);
         }
     });
 }
 
-function setErrorsForHotelAddPanel(error){
+function setErrorsInAddPanel(error){
     const jsonError = JSON.parse(error).errors;
 
     console.log(jsonError);
