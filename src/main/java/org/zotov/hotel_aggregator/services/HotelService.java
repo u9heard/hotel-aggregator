@@ -52,6 +52,7 @@ public class HotelService extends CrudService<HotelResponseDTO, HotelRequestDTO,
         }
     }
 
+    @Transactional
     public List<HotelWithRoomsResponseDTO> findHotelsWithFreeRooms(ReservationSearchDTO reservationSearchDTO) {
         List<Hotel> hotelList = this.repository.findHotelByCity(reservationSearchDTO.getCity());
         if (hotelList.isEmpty()) {

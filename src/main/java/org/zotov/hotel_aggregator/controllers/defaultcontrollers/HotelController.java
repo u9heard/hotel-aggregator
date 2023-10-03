@@ -40,7 +40,7 @@ public class HotelController {
 
         List<HotelWithRoomsResponseDTO> hotelList = this.hotelService.findHotelsWithFreeRooms(reservationSearchDTO);
         model.addAttribute("hotels", hotelList);
-        return "client/hotel_list";
+        return "client/fragments/hotel_list";
     }
 
     @GetMapping("/admin_hotel_list")
