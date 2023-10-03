@@ -60,7 +60,7 @@ public class ReservationService extends CrudService<ReservationResponseDTO, Rese
         this.repository.deleteByIdAndUserId(id, userId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReservationResponseDTO> findReservationsByUserId(Long userId){
         return this.repository.readByUserId(userId).stream().map(this.modelMapper::modelToResponseDTO).toList();
     }
