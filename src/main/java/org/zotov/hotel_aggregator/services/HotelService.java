@@ -1,6 +1,7 @@
 package org.zotov.hotel_aggregator.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.zotov.hotel_aggregator.dto.hotel.HotelWithRoomsResponseDTO;
 import org.zotov.hotel_aggregator.dto.hotel.HotelRequestDTO;
 import org.zotov.hotel_aggregator.dto.hotel.HotelResponseDTO;
@@ -32,18 +33,23 @@ public class HotelService extends CrudService<HotelResponseDTO, HotelRequestDTO,
     }
 
     @Override
+    @Transactional
     public HotelResponseDTO save(HotelRequestDTO hotel) {
-        if (checkIfExists(hotel.getName(), hotel.getCity())) {
+        if (checkIfExistsOnInsert(hotel.getName(), hotel.getCity())) {
             throw new ModelConflictException("Hotel already exists");
         }
 
         return super.save(hotel);
     }
 
+    @Transactional
     public void update(Long id, HotelRequestDTO hotel){
-        checkIfExists(hotel.getName(), hotel.getCity());
-
-        this.repository.save(new Hotel(id, hotel.getName(), hotel.getCity()));
+        if(checkIfExistsOnUpdate(id, hotel.getName())) {
+            this.repository.save(new Hotel(id, hotel.getName(), hotel.getCity()));
+        }
+        else {
+            throw new ModelNotFoundException("Hotel with this id and name not found");
+        }
     }
 
     public List<HotelWithRoomsResponseDTO> findHotelsWithFreeRooms(ReservationSearchDTO reservationSearchDTO) {
@@ -75,7 +81,12 @@ public class HotelService extends CrudService<HotelResponseDTO, HotelRequestDTO,
         });
     }
 
-    private boolean checkIfExists(String name, String city) {
+    private boolean checkIfExistsOnInsert(String name, String city) {
         return this.repository.getHotelByCityAndName(city, name).isPresent();
+    }
+
+    private boolean checkIfExistsOnUpdate(Long id, String name) {
+        Hotel hotel = this.repository.findById(id).orElseThrow(() -> new ModelNotFoundException("Hotel not found"));
+        return hotel.getName().equals(name);
     }
 }

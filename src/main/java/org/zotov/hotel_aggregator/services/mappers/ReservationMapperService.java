@@ -2,6 +2,8 @@ package org.zotov.hotel_aggregator.services.mappers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.zotov.hotel_aggregator.dto.reservation.ReservationRequestDTO;
 import org.zotov.hotel_aggregator.dto.reservation.ReservationResponseDTO;
 import org.zotov.hotel_aggregator.exceptions.service.ModelNotFoundException;
@@ -32,6 +34,7 @@ public class ReservationMapperService implements ModelMapperService<ReservationR
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public Reservation RequestDTOtoModel(ReservationRequestDTO reservationRequestDTO) {
 
         BigDecimal price = roomRepository.findById(
@@ -45,6 +48,7 @@ public class ReservationMapperService implements ModelMapperService<ReservationR
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public ReservationResponseDTO modelToResponseDTO(Reservation reservation) throws ModelNotFoundException {
         try {
             ReservationResponseDTO responseDTO = new ReservationResponseDTO();

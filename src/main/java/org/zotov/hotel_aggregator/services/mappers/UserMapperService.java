@@ -2,6 +2,9 @@ package org.zotov.hotel_aggregator.services.mappers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.zotov.hotel_aggregator.dto.user.UserRequestDTO;
 import org.zotov.hotel_aggregator.dto.user.UserResponseDTO;
 import org.zotov.hotel_aggregator.exceptions.service.InternalServiceException;
@@ -20,12 +23,14 @@ public class UserMapperService implements ModelMapperService<UserRequestDTO, Use
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public User RequestDTOtoModel(UserRequestDTO userRequestDTO) {
         Long userRoleId = this.roleRepository.findByRoleName(userRequestDTO.getRole()).orElseThrow(() -> new ModelNotFoundException("User's role not found")).getId();
         return new User(null, userRequestDTO.getUsername(), userRequestDTO.getPassword(), userRoleId);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public UserResponseDTO modelToResponseDTO(User user) {
         try {
             String roleName = this.roleRepository.findById(user.getRoleId()).orElseThrow(() -> new InternalServiceException("Can't find role for existing user")).getRoleName();

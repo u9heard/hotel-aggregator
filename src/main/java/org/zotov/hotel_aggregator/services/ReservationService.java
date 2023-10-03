@@ -2,6 +2,7 @@ package org.zotov.hotel_aggregator.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.zotov.hotel_aggregator.dto.reservation.ReservationRequestDTO;
 import org.zotov.hotel_aggregator.dto.reservation.ReservationResponseDTO;
 import org.zotov.hotel_aggregator.exceptions.service.ModelConflictException;
@@ -28,6 +29,7 @@ public class ReservationService extends CrudService<ReservationResponseDTO, Rese
     }
 
     @Override
+    @Transactional
     public ReservationResponseDTO save(ReservationRequestDTO reservation){
         if(checkIfRoomRented(reservation.getRoomId(), reservation.getDateStart(), reservation.getDateEnd())){
             throw new ModelConflictException("Room is already booked");
@@ -43,6 +45,7 @@ public class ReservationService extends CrudService<ReservationResponseDTO, Rese
     }
 
     @Override
+    @Transactional
     public void update(Long id, ReservationRequestDTO reservation) {
         if(checkIfRoomRented(reservation.getRoomId(), reservation.getDateStart(), reservation.getDateEnd())){
             throw new ModelConflictException("Room is already booked");
@@ -57,6 +60,7 @@ public class ReservationService extends CrudService<ReservationResponseDTO, Rese
         this.repository.deleteByIdAndUserId(id, userId);
     }
 
+    @Transactional
     public List<ReservationResponseDTO> findReservationsByUserId(Long userId){
         return this.repository.readByUserId(userId).stream().map(this.modelMapper::modelToResponseDTO).toList();
     }

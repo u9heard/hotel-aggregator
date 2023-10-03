@@ -26,4 +26,8 @@
     <changeSet id="6" author="im">
         <sqlFile path="sql/alter_arch_room_trg.sql" splitStatements="false" relativeToChangelogFile="true" />
     </changeSet>
+
+    <changeSet id="7" author="im">
+        <sqlFile path="sql/alter_user.sql" relativeToChangelogFile="true" />
+    </changeSet>
 </databaseChangeLog>

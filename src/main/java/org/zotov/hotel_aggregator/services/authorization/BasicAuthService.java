@@ -2,6 +2,8 @@ package org.zotov.hotel_aggregator.services.authorization;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.zotov.hotel_aggregator.credentials.UserCredentials;
 import org.zotov.hotel_aggregator.exceptions.service.InternalServiceException;
 import org.zotov.hotel_aggregator.exceptions.service.ModelNotFoundException;
@@ -26,6 +28,7 @@ public class BasicAuthService implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long authorize(UserCredentials credentials, String roleRequired) {
         User checkUser = userRepository.getByUsername(credentials.getUsername()).orElseThrow(() -> new ModelNotFoundException("User with username = " + credentials.getUsername() + "not found"));
         if(!checkUser.getPassword().equals(credentials.getPassword())){

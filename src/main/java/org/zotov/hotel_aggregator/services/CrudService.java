@@ -1,6 +1,8 @@
 package org.zotov.hotel_aggregator.services;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.zotov.hotel_aggregator.exceptions.service.ModelNotFoundException;
 import org.zotov.hotel_aggregator.interfaces.services.ModelMapperService;
 import org.zotov.hotel_aggregator.interfaces.services.BaseService;
@@ -18,6 +20,7 @@ public abstract class CrudService<ResponseDTO, RequestDTO, Model, Repo extends C
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public ResponseDTO save(RequestDTO requestModel) {
         Model modelToSave = modelMapper.RequestDTOtoModel(requestModel);
         Model savedModel = this.repository.save(modelToSave);
@@ -31,6 +34,7 @@ public abstract class CrudService<ResponseDTO, RequestDTO, Model, Repo extends C
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDTO findById(Long id) {
         Model foundModel = this.repository.findById(id).orElseThrow(() -> new ModelNotFoundException(MODEL_NAME + "not found, id = " + id));
 

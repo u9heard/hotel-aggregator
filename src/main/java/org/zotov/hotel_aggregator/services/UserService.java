@@ -2,6 +2,8 @@ package org.zotov.hotel_aggregator.services;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.zotov.hotel_aggregator.credentials.UserCredentials;
 import org.zotov.hotel_aggregator.dto.user.UserRequestDTO;
 import org.zotov.hotel_aggregator.dto.user.UserResponseDTO;
@@ -26,6 +28,7 @@ public class UserService extends CrudService<UserResponseDTO, UserRequestDTO, Us
         this.roleRepository = roleRepository;
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserResponseDTO save(UserRequestDTO user){
         if(checkUsernameExists(user.getUsername())){
             throw new ModelConflictException("Username already exists. Username = " + user.getUsername());
@@ -33,29 +36,33 @@ public class UserService extends CrudService<UserResponseDTO, UserRequestDTO, Us
         return super.save(user);
     }
 
+    @Transactional
     public void update(Long id, UserRequestDTO user){
-        if(checkUsernameExists(user.getUsername())){
-            throw new ModelConflictException("Username already exists. Username = " + user.getUsername());
+        if(!checkUserExists(id, user.getUsername())){
+            throw new ModelConflictException("Unable to edit username " + user.getUsername());
         }
-        Role userRole = this.roleRepository.findByRoleName(user.getRole()).orElseThrow(() -> new ModelNotFoundException("Role not exists"));
-
-        this.repository.save(new User(id, user.getUsername(),user.getPassword(), userRole.getId()));
+        User userToUpdate = this.modelMapper.RequestDTOtoModel(user);
+        userToUpdate.setId(id);
+        this.repository.save(userToUpdate);
     }
 
-    public Long count(){
-        return this.repository.count();
-    }
-
+    @Transactional(readOnly = true)
     public String getRoleByUsername(String username){
         User searchUser = this.repository.getByUsername(username).orElseThrow(() -> new ModelNotFoundException(username + "not found"));
         return this.roleRepository.findById(searchUser.getRoleId()).orElseThrow(() -> new ModelNotFoundException("User " + username + "has an unknown role")).getRoleName();
     }
 
-    public boolean checkUsernameExists(String username){
+    @Transactional
+    public List<UserResponseDTO> getAll() {
+        return IterableUtils.toList(this.repository.findAll()).stream().map(this.modelMapper::modelToResponseDTO).toList();
+    }
+
+    private boolean checkUsernameExists(String username){
         return this.repository.getByUsername(username).isPresent();
     }
 
-    public List<UserResponseDTO> getAll() {
-        return IterableUtils.toList(this.repository.findAll()).stream().map(this.modelMapper::modelToResponseDTO).toList();
+    private boolean checkUserExists(Long id, String username){
+        User user = this.repository.findById(id).orElseThrow(() -> new ModelNotFoundException("User not found"));
+        return user.getUsername().equals(username);
     }
 }
