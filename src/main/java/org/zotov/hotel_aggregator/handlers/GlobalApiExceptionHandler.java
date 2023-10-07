@@ -33,8 +33,6 @@ public class GlobalApiExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> constraintViolation(ConstraintViolationException exception){
-        exception.printStackTrace();
-
         return ResponseEntity.badRequest().body(ErrorResponseMapper.fromConstraintViolation(exception.getConstraintViolations()));
     }
 
@@ -46,7 +44,6 @@ public class GlobalApiExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> internalError(Exception exception){
         exception.printStackTrace();
-        System.out.println("Internal");
         return new ResponseEntity<>(ErrorResponseMapper.fromString("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

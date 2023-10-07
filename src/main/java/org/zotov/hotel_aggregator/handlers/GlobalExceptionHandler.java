@@ -29,8 +29,6 @@ public class GlobalExceptionHandler {
     public ModelAndView modelNotFound(ModelNotFoundException ex){
         ModelAndView modelAndView = new ModelAndView("error_page");
         modelAndView.addObject("errors", List.of(new FieldError("", "", ex.getMessage())));
-        ex.printStackTrace();
-
         return modelAndView;
     }
 
@@ -39,8 +37,6 @@ public class GlobalExceptionHandler {
         ModelAndView modelAndView = new ModelAndView("error_page");
         modelAndView.addObject("errors", exception.getAllErrors());
         modelAndView.setStatus(HttpStatus.BAD_REQUEST);
-        exception.printStackTrace();
-
         return modelAndView;
     }
 
@@ -49,8 +45,6 @@ public class GlobalExceptionHandler {
         ModelAndView modelAndView = new ModelAndView("error_page");
         modelAndView.addObject("errors", List.of(new FieldError("", "", exception.getMessage())));
         modelAndView.setStatus(HttpStatus.BAD_REQUEST);
-        exception.printStackTrace();
-
         return modelAndView;
     }
 
