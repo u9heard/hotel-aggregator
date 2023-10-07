@@ -20,8 +20,7 @@ function reserveRoom(dateStart, dateEnd, roomId){
         contentType: "application/json",
 
         success: function(response) {
-            alert(response);
-            // window.location.href = 'user/orders';
+            window.location.href = '/reservations';
         },
         error: function(error) {
             alert(error);
