@@ -3,31 +3,4 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="1" author="im">
-        <sqlFile path="sql/create_user.sql" relativeToChangelogFile="true" />
-    </changeSet>
-
-    <changeSet id="2" author="im">
-        <sqlFile path="sql/create_hotel.sql" relativeToChangelogFile="true" />
-    </changeSet>
-
-    <changeSet id="3" author="im">
-        <sqlFile path="sql/alter_reservations.sql" relativeToChangelogFile="true" />
-    </changeSet>
-
-    <changeSet id="4" author="im">
-        <sqlFile path="sql/hotel_archive.sql" relativeToChangelogFile="true" />
-    </changeSet>
-
-    <changeSet id="5" author="im">
-        <sqlFile path="sql/room_archive.sql" relativeToChangelogFile="true" />
-    </changeSet>
-
-    <changeSet id="6" author="im">
-        <sqlFile path="sql/alter_arch_room_trg.sql" splitStatements="false" relativeToChangelogFile="true" />
-    </changeSet>
-
-    <changeSet id="7" author="im">
-        <sqlFile path="sql/alter_user.sql" relativeToChangelogFile="true" />
-    </changeSet>
 </databaseChangeLog>

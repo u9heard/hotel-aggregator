@@ -1,0 +1,19 @@
+spring:
+  mvc:
+    static-path-pattern: /static/**
+  thymeleaf:
+    prefix: /WEB-INF/views/
+
+
+  datasource:
+    username: "postgres"
+    password: "root"
+    hikari:
+      maximum-pool-size: 10
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+    url: "jdbc:postgresql://localhost:5432/hotel_aggregator"
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
